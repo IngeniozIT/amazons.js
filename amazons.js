@@ -104,86 +104,20 @@ class Amazons {
         history.forEach(move => this.move(move));
     }
 
-    // Game state
-
-    board() {
-        return this._board;
+    put(piece, cell) {
+        return this.putFromIndex(piece, ...this.cellToIndex(cell));
     }
 
-    ascii() {
-        let bar = '+-'+Array(this._board.length).fill('-').join('-')+'-+';
-        return bar+"\n"+this._board.map(x => {
-            return `| ${x.map(y => {
-                switch (y) {
-                    case Amazons.CELL_EMPTY:
-                        return '.';
-                        break;
-                    case Amazons.CELL_WHITE:
-                        return 'W';
-                        break;
-                    case Amazons.CELL_BLACK:
-                        return 'B';
-                        break;
-                    case Amazons.CELL_ARROW:
-                        return 'O';
-                        break;
-                }
-            }).join(' ')} |`;
-        }).join("\n")+"\n"+bar;
+    putFromIndex(piece, col, row) {
+        this._board[row][col] = piece;
     }
 
-    state() {
-        return this.status;
+    remove(cell) {
+        return this.put(Amazons.CELL_EMPTY, cell);
     }
 
-    gameOver() {
-        return this.status === Amazons.STATE_WHITE_WON || this.status === Amazons.STATE_BLACK_WON;
-    }
-
-    turn() {
-        return this.status !== Amazons.STATE_WHITE_WON && this.status !== Amazons.STATE_BLACK_WON ? this.status : null;
-    }
-
-    history() {
-        return this._history;
-    }
-
-    moves() {
-        return this.movesIndex().map(x => this.indexToCell(x[0], x[1])+':'+this.indexToCell(x[2], x[3])+':'+this.indexToCell(x[4], x[5]));
-    }
-
-    movesIndex() {
-        if (this.gameOver()) {
-            return null;
-        }
-
-        let moves = [];
-
-        let pieces = this.status === Amazons.STATE_WHITE ? this.whitePieces : this.blackPieces;
-
-        moves = pieces.map(piece => {
-            return this.getLineOfSight(...piece).map(los => {
-                return this.getLineOfSight(...los, ...piece).map(x => [...piece, ...los, ...x]);
-            }).flat(1);
-        }).flat(1);
-
-        return moves;
-    }
-
-    get(cell) {
-        return this.getFromIndex(this.cellToIndex(cell));
-    }
-
-    getFromIndex(col, row) {
-        return this._board[row] !== undefined ? this._board[row][col] : null;
-    }
-
-    isPlayingPiece(col, row) {
-        return this.getFromIndex(col, row) === (this.status === Amazons.STATE_WHITE ? Amazons.CELL_WHITE : Amazons.CELL_BLACK);
-    }
-
-    isEmpty(col, row) {
-        return this.getFromIndex(col, row) === Amazons.CELL_EMPTY;
+    removeFromIndex(col, row) {
+        return this.putFromIndex(Amazons.CELL_EMPTY, col, row);
     }
 
     // Actions
@@ -236,37 +170,88 @@ class Amazons {
         this._history.push(`${this.indexToCell(fromCol, fromRow)}:${this.indexToCell(toCol, toRow)}:${this.indexToCell(atkCol, atkRow)}`);
     }
 
-    put(piece, cell) {
-        return this.putFromIndex(piece, ...this.cellToIndex(cell));
+    // Game state
+
+    board() {
+        return this._board;
     }
 
-    putFromIndex(piece, col, row) {
-        this._board[row][col] = piece;
+    ascii() {
+        let bar = '+-'+Array(this._board.length).fill('-').join('-')+'-+';
+        return bar+"\n"+this._board.map(x => {
+            return `| ${x.map(y => {
+                switch (y) {
+                    case Amazons.CELL_EMPTY:
+                        return '.';
+                        break;
+                    case Amazons.CELL_WHITE:
+                        return 'W';
+                        break;
+                    case Amazons.CELL_BLACK:
+                        return 'B';
+                        break;
+                    case Amazons.CELL_ARROW:
+                        return 'O';
+                        break;
+                }
+            }).join(' ')} |`;
+        }).join("\n")+"\n"+bar;
     }
 
-    remove(cell) {
-        return this.put(Amazons.CELL_EMPTY, cell);
+    state() {
+        return this.status;
     }
 
-    removeFromIndex(col, row) {
-        return this.putFromIndex(Amazons.CELL_EMPTY, col, row);
+    gameOver() {
+        return this.status === Amazons.STATE_WHITE_WON || this.status === Amazons.STATE_BLACK_WON;
     }
 
-    // Other stuff
+    turn() {
+        return this.status !== Amazons.STATE_WHITE_WON && this.status !== Amazons.STATE_BLACK_WON ? this.status : null;
+    }
 
-    cellToIndex(cell) {
-        let matches = cell.match(/([A-Z]+)(\d+)/);
+    history() {
+        return this._history;
+    }
 
-        // Wrong cordinates format
-        if (matches.length !== 3) {
-            throw `Cordinates ${cell} cannot be resolved to a board cell.`;
+    // Strategy
+
+    moves() {
+        return this.movesIndex().map(x => this.indexToCell(x[0], x[1])+':'+this.indexToCell(x[2], x[3])+':'+this.indexToCell(x[4], x[5]));
+    }
+
+    movesIndex() {
+        if (this.gameOver()) {
+            return null;
         }
 
-        return matches.slice(1).map(x => this.notation[x]);
+        let moves = [];
+
+        let pieces = this.status === Amazons.STATE_WHITE ? this.whitePieces : this.blackPieces;
+
+        moves = pieces.map(piece => {
+            return this.getLineOfSight(...piece).map(los => {
+                return this.getLineOfSight(...los, ...piece).map(x => [...piece, ...los, ...x]);
+            }).flat(1);
+        }).flat(1);
+
+        return moves;
     }
 
-    indexToCell(col, row) {
-        return `${this.colNotation[col]}${this.rowNotation[row]}`;
+    get(cell) {
+        return this.getFromIndex(this.cellToIndex(cell));
+    }
+
+    getFromIndex(col, row) {
+        return this._board[row] !== undefined ? this._board[row][col] : null;
+    }
+
+    isPlayingPiece(col, row) {
+        return this.getFromIndex(col, row) === (this.status === Amazons.STATE_WHITE ? Amazons.CELL_WHITE : Amazons.CELL_BLACK);
+    }
+
+    isEmpty(col, row) {
+        return this.getFromIndex(col, row) === Amazons.CELL_EMPTY;
     }
 
     isValidMove(move) {
@@ -278,19 +263,14 @@ class Amazons {
             this.hasLineOfSight(toCol, toRow, atkCol, atkRow, fromCol, fromRow);
     }
 
-    getMoveCells(move) {
-        let moveCells = move.split(':');
-
-        // Wrong move format
-        if (moveCells.length !== 3) {
-            throw `Move ${move} cannot be resolved to a valid move.`;
+    isSurrounded(col, row) {
+        for (let dir of Amazons.DIRECTIONS) {
+            if (this.isEmpty(col + dir[0], row + dir[1])) {
+                return false;
+            }
         }
 
-        return moveCells;
-    }
-
-    getMoveIndex(move) {
-        return this.getMoveCells(move).map(cord => this.cellToIndex(cord)).flat(1);
+        return true;
     }
 
     getLineOfSight(col, row, ignoreCol = null, ignoreRow = null) {
@@ -328,13 +308,35 @@ class Amazons {
         return false;
     }
 
-    isSurrounded(col, row) {
-        for (let dir of Amazons.DIRECTIONS) {
-            if (this.isEmpty(col + dir[0], row + dir[1])) {
-                return false;
-            }
+    // Other stuff
+
+    cellToIndex(cell) {
+        let matches = cell.match(/([A-Z]+)(\d+)/);
+
+        // Wrong cordinates format
+        if (matches.length !== 3) {
+            throw `Cordinates ${cell} cannot be resolved to a board cell.`;
         }
 
-        return true;
+        return matches.slice(1).map(x => this.notation[x]);
+    }
+
+    indexToCell(col, row) {
+        return `${this.colNotation[col]}${this.rowNotation[row]}`;
+    }
+
+    getMoveCells(move) {
+        let moveCells = move.split(':');
+
+        // Wrong move format
+        if (moveCells.length !== 3) {
+            throw `Move ${move} cannot be resolved to a valid move.`;
+        }
+
+        return moveCells;
+    }
+
+    getMoveIndex(move) {
+        return this.getMoveCells(move).map(cord => this.cellToIndex(cord)).flat(1);
     }
 }

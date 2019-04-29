@@ -40,18 +40,26 @@ console.log(`History : ${amazons.history()}`);
 ## API
 
 ### Cell notation
-
 There are two ways to specify a board cell :
 ```js
     let cell = 'C8'; // Column C, Row 8 (just like in chess : the most bottom-left cell is "A1")
     let cell = [2, 0]; // Column 2, Row 0 (!! arrays start at 0 !!)
 ```
 
-### Constructor: Amazons([ history ], [ config ])
+### Move notation
+There are two ways to specify a move :
+```js
+    let move = 'C8:D7:A6'; // Move the piece from C8 to D7, shoot an arrow at A6
+    let move = [2, 0, 4, 0, 3, 1]; // Move the piece from [2, 0] to [4, 0], shoot at [3, 1]
+```
+
+### Initialization
+
+#### Constructor: Amazons([ history ], [ config ])
 The Chess() constructor takes two optional parameters :
 
 - history: a string or array that contains a list of moves.
-- config: an object that contains configuration parameters.
+- config: an object that contains configuration parameters (board size, number and position of each player's pieces at the start of the game).
 
 
 ```js
@@ -79,7 +87,7 @@ let amazons = new Amazons(null, {
 });
 ```
 
-### .clear()
+#### .clear()
 Clears the board and restarts the game.
 
 ```js
@@ -88,7 +96,7 @@ amazons.history();
 // -> []
 ```
 
-### .load(history)
+#### .load(history)
 The board is cleared, and the moves are played.
 
 ```js
@@ -106,29 +114,70 @@ amazons.history();
 // -> ['A4:A3:A2', 'D10:D5:D8', 'J4:H2:A9']
 ```
 
-### .board()
-Returns an 2D array representation of the current position.
+#### .put(piece, cell), .putFromIndex(piece, col, row)
+Places a piece on the board.
+
+```js
+let amazons = new Amazons();
+amazons.put(Amazons.CELL_WHITE, 'D7');
+amazons.putFromIndex(Amazons.CELL_WHITE, 3, 3);
+```
+
+#### .remove(cell), .removeFromIndex(col, row)
+Removes a piece from the board.
+
+```js
+let amazons = new Amazons();
+amazons.remove('D10');
+amazons.removeFromIndex(3, 0);
+```
+
+### Actions
+
+#### .move(move), .moveFromIndex(fromCol, fromRow, toCol, toRow, atkCol, atkRow)
+The player moves a piece and shoots an arrow.
+
+```js
+let amazons = new Amazons();
+amazons.move('A4:A3:A2');
+amazons.history();
+// -> ['A4:A3:A2']
+
+amazons.clear();
+amazons.history();
+// -> []
+
+amazons.move(0, 6, 0, 7, 0, 8);
+amazons.history();
+// -> ['A4:A3:A2']
+```
+
+### Game state
+
+#### .board()
+Returns an 2D array representation of the current board state.
 
 ```js
 let amazons = new Amazons();
 
 amazons.board();
-// => [
-//     [0,0,0,2,0,0,2,0,0,0],
-//     [0,0,0,0,0,0,0,0,0,0],
-//     [0,0,0,0,0,0,0,0,0,0],
-//     [2,0,0,0,0,0,0,0,0,2],
-//     [0,0,0,0,0,0,0,0,0,0],
-//     [0,0,0,0,0,0,0,0,0,0],
-//     [1,0,0,0,0,0,0,0,0,1],
-//     [0,0,0,0,0,0,0,0,0,0],
-//     [0,0,0,0,0,0,0,0,0,0],
-//     [0,0,0,1,0,0,1,0,0,0]
-//   ]
+// =>
+//    [
+//        [0,0,0,2,0,0,2,0,0,0],
+//        [0,0,0,0,0,0,0,0,0,0],
+//        [0,0,0,0,0,0,0,0,0,0],
+//        [2,0,0,0,0,0,0,0,0,2],
+//        [0,0,0,0,0,0,0,0,0,0],
+//        [0,0,0,0,0,0,0,0,0,0],
+//        [1,0,0,0,0,0,0,0,0,1],
+//        [0,0,0,0,0,0,0,0,0,0],
+//        [0,0,0,0,0,0,0,0,0,0],
+//        [0,0,0,1,0,0,1,0,0,0]
+//    ]
 ```
 
-### .ascii()
-Returns a string containing an ASCII diagram of the current position.
+#### .ascii()
+Returns a string containing an ASCII diagram of the current board state.
 
 ```js
 let amazons = new Amazons();
@@ -139,6 +188,7 @@ amazons.move('D10:D5:D8');
 amazons.move('J4:H2:A9');
 
 amazons.ascii();
+// =>
 // +---------------------+
 // | . . . . . . B . . . |
 // | O . . . . . . . . . |
@@ -153,13 +203,13 @@ amazons.ascii();
 // +---------------------+
 ```
 
-### .state()
+#### .state()
 Returns the current state of the game.
 State can either be :
-- Amazons.STATE_WHITE (white player's turn to move)
-- Amazons.STATE_BLACK (black player's turn to move)
-- Amazons.STATE_WHITE_WON (white player won)
-- Amazons.STATE_BLACK_WON (black player won).
+- `Amazons.STATE_WHITE` (white player's turn to move)
+- `Amazons.STATE_BLACK` (black player's turn to move)
+- `Amazons.STATE_WHITE_WON` (white player won)
+- `Amazons.STATE_BLACK_WON` (black player won).
 
 ```js
 let amazons = new Amazons();
@@ -171,7 +221,7 @@ amazons.state();
 // -> 1 -> STATE_BLACK
 ```
 
-### .game_over()
+#### .game_over()
 Returns true if the game has ended, false otherwise.
 
 ```js
@@ -180,11 +230,11 @@ amazons.game_over();
 // -> false
 ```
 
-### .turn()
+#### .turn()
 Returns which player's turn it is.
 Turn can either be :
-- Amazons.STATE_WHITE (white player's turn to move)
-- Amazons.STATE_BLACK (black player's turn to move)
+- `Amazons.STATE_WHITE` (white player's turn to move)
+- `Amazons.STATE_BLACK` (black player's turn to move)
 - null (the game has ended)
 
 ```js
@@ -197,7 +247,7 @@ amazons.turn();
 // -> 1 -> STATE_BLACK
 ```
 
-### .history()
+#### .history()
 Returns a list containing the moves of the current game.
 
 ```js
@@ -212,16 +262,18 @@ amazons.history();
 // -> ['A4:A3:A2', 'D10:D5:D8', 'J4:H2:A9']
 ```
 
-### .moves(), .movesIndex()
-Returns a list of possible moves (respectively using cell names and cell [column, row] indexes).
+### Strategy
 
-### .get(cell), .getFromIndex(col, row)
+#### .moves(), .movesIndex()
+Returns a list of valid moves (respectively using cell names and cell [column, row] indexes).
+
+#### .get(cell), .getFromIndex(col, row)
 Returns the content of the cell (respectively using cell names and cell [column, row] indexes).
 Content can either be :
-- Amazons.CELL_EMPTY (empty cell)
-- Amazons.CELL_WHITE (white piece)
-- Amazons.CELL_BLACK (black piece)
-- Amazons.CELL_ARROW (arrow).
+- `Amazons.CELL_EMPTY` (empty cell)
+- `Amazons.CELL_WHITE` (white piece)
+- `Amazons.CELL_BLACK` (black piece)
+- `Amazons.CELL_ARROW` (arrow).
 
 ```js
 let amazons = new Amazons();
@@ -232,7 +284,7 @@ amazons.getFromIndex(5, 2);
 // -> 2 -> CELL_BLACK
 ```
 
-### .isPlayingPiece(col, row)
+#### .isPlayingPiece(col, row)
 Returns true id the cell contains a piece that belongs to the player who has to play, false otherwise.
 
 ```js
@@ -244,7 +296,7 @@ amazons.getFromIndex(0, 3);
 // -> false
 ```
 
-### .isEmpty(col, row)
+#### .isEmpty(col, row)
 Returns true if the cell is empty, false otherwise.
 
 ```js
@@ -255,3 +307,18 @@ amazons.isEmpty(2, 0);
 amazons.isEmpty(4, 3);
 // -> true
 ```
+
+#### .isValidMove(move), .isValidMoveFromIndex(fromCol, fromRow, toCol, toRow, atkCol, atkRow)
+Checks is a move is valid. True is the move is valid, false otherwise.
+
+#### .isSurrounded(col, row)
+Checks if a cell is surrounded by non-empty cells. True is it is surrounded, false otherwise.
+
+### .getLineOfSight(col, row, ignoreCol = null, ignoreRow = null)
+Gets a list of cells in range of a cell (`[col, row]`).
+An ignored cell (`[ignoreCol, ignoreRow]`) can be given (this cell will be considered empty even if it is not).
+
+### .hasLineOfSight(fromCol, fromRow, toCol, toRow, ignoreCol, ignoreRow)
+Checks if there is a path between two cells (`[fromCol, fromRow]` and `[toCol, toRow]`).
+An ignored cell (`[ignoreCol, ignoreRow]`) can be given (this cell will be considered empty even if it is not).
+True is there is a valid path, false otherwise.
