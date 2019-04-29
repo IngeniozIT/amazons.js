@@ -1,14 +1,30 @@
 class Amazons {
 
-    static get CELL_EMPTY() { return 0; }
-    static get CELL_WHITE() { return 1; }
-    static get CELL_BLACK() { return 2; }
-    static get CELL_ARROW() { return 4; }
+    static get CELL_EMPTY() {
+        return 0;
+    }
+    static get CELL_WHITE() {
+        return 1;
+    }
+    static get CELL_BLACK() {
+        return 2;
+    }
+    static get CELL_ARROW() {
+        return 4;
+    }
 
-    static get STATE_WHITE() { return 0; }
-    static get STATE_BLACK() { return 1; }
-    static get STATE_WHITE_WON() { return 2; }
-    static get STATE_BLACK_WON() { return 4; }
+    static get STATE_WHITE() {
+        return 0;
+    }
+    static get STATE_BLACK() {
+        return 1;
+    }
+    static get STATE_WHITE_WON() {
+        return 2;
+    }
+    static get STATE_BLACK_WON() {
+        return 4;
+    }
 
     static get DIRECTIONS() {
         return [
@@ -32,10 +48,16 @@ class Amazons {
             boardWidth: 10,
             boardHeight: 10,
             whitePieces: [
-                [0, 6], [3, 9], [6, 9], [9, 6]
+                [0, 6],
+                [3, 9],
+                [6, 9],
+                [9, 6]
             ],
             blackPieces: [
-                [0, 3], [3, 0], [6, 0], [9, 3]
+                [0, 3],
+                [3, 0],
+                [6, 0],
+                [9, 3]
             ]
         };
         Object.assign(this.config, config);
@@ -94,7 +116,7 @@ class Amazons {
         this.status = Amazons.STATE_WHITE;
     }
 
-    load (history) {
+    load(history) {
         this.clear();
 
         if (typeof history == 'string' || history instanceof String) {
@@ -177,8 +199,8 @@ class Amazons {
     }
 
     ascii() {
-        let bar = '+-'+Array(this._board.length).fill('-').join('-')+'-+';
-        return bar+"\n"+this._board.map(x => {
+        let bar = '+-' + Array(this._board.length).fill('-').join('-') + '-+';
+        return bar + "\n" + this._board.map(x => {
             return `| ${x.map(y => {
                 switch (y) {
                     case Amazons.CELL_EMPTY:
@@ -195,7 +217,7 @@ class Amazons {
                         break;
                 }
             }).join(' ')} |`;
-        }).join("\n")+"\n"+bar;
+        }).join("\n") + "\n" + bar;
     }
 
     state() {
@@ -217,7 +239,7 @@ class Amazons {
     // Strategy
 
     moves() {
-        return this.movesIndex().map(x => this.indexToCell(x[0], x[1])+':'+this.indexToCell(x[2], x[3])+':'+this.indexToCell(x[4], x[5]));
+        return this.movesIndex().map(x => this.indexToCell(x[0], x[1]) + ':' + this.indexToCell(x[2], x[3]) + ':' + this.indexToCell(x[4], x[5]));
     }
 
     movesIndex() {
@@ -277,7 +299,8 @@ class Amazons {
         let los = [];
 
         for (let dir of Amazons.DIRECTIONS) {
-            for (let dist = 1, x = col + dir[0], y = row + dir[1]; (x === ignoreCol && y === ignoreRow) || this.isEmpty(x, y); x += dir[0], y += dir[1]) {
+            for (let dist = 1, x = col + dir[0], y = row + dir[1];
+                (x === ignoreCol && y === ignoreRow) || this.isEmpty(x, y); x += dir[0], y += dir[1]) {
                 los.push([x, y]);
             }
         }
@@ -285,7 +308,7 @@ class Amazons {
         return los;
     }
 
-    hasLineOfSight(fromCol, fromRow, toCol, toRow, ignoreCol, ignoreRow) {
+    hasLineOfSight(fromCol, fromRow, toCol, toRow, ignoreCol = null, ignoreRow = null) {
         let dirCol = fromCol == toCol ? 0 :
             (fromCol > toCol ? -1 : 1);
         let dirRow = fromRow == toRow ? 0 :
@@ -298,7 +321,8 @@ class Amazons {
 
         // (Because you're mine)
         // I walk the line
-        for (let x = fromCol + dirCol, y = fromRow + dirRow; (x === ignoreCol && y === ignoreRow) || this.isEmpty(x, y); x += dirCol, y += dirRow) {
+        for (let x = fromCol + dirCol, y = fromRow + dirRow;
+            (x === ignoreCol && y === ignoreRow) || this.isEmpty(x, y); x += dirCol, y += dirRow) {
             // Desired point reached
             if (x === toCol && y === toRow) {
                 return true;

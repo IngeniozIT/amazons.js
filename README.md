@@ -314,11 +314,11 @@ Checks is a move is valid. True is the move is valid, false otherwise.
 #### .isSurrounded(col, row)
 Checks if a cell is surrounded by non-empty cells. True is it is surrounded, false otherwise.
 
-### .getLineOfSight(col, row, ignoreCol = null, ignoreRow = null)
+### .getLineOfSight(col, row, [ ignoreCol, ignoreRow ])
 Gets a list of cells in range of a cell (`[col, row]`).
 An ignored cell (`[ignoreCol, ignoreRow]`) can be given (this cell will be considered empty even if it is not).
 
-### .hasLineOfSight(fromCol, fromRow, toCol, toRow, ignoreCol, ignoreRow)
+### .hasLineOfSight(fromCol, fromRow, toCol, toRow, [ ignoreCol, ignoreRow ])
 Checks if there is a path between two cells (`[fromCol, fromRow]` and `[toCol, toRow]`).
 An ignored cell (`[ignoreCol, ignoreRow]`) can be given (this cell will be considered empty even if it is not).
 True is there is a valid path, false otherwise.
