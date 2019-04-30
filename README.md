@@ -9,7 +9,18 @@ You can learn how to play the Game of Amazons by watching this (awesome) video :
 
 ## Example code
 
-This code is just the computer randomly playing against itself and logging what's up at every step of the process.
+This code is just the computer randomly playing against itself.
+
+```js
+let amazons = new Amazons();
+while (!amazons.gameOver()) {
+    let moves = amazons.moves();
+    let move = moves[Math.floor(Math.random() * moves.length)];
+    amazons.move(move);
+}
+```
+
+And here's the same thing, with the addition of logging what's up at every step of the process.
 
 ```js
 // Create a new game
