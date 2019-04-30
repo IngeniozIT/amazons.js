@@ -9,30 +9,36 @@ You can learn how to play the Game of Amazons by watching this (awesome) video :
 
 ## Example code
 
+This code is just the computer randomly playing against itself and logging what's up at every step of the process.
+
 ```js
 // Create a new game
 let amazons = new Amazons();
-
 console.log(`Board state :\n${amazons.ascii()}`);
 
 // Keep the game going until someone won
 while (!amazons.gameOver()) {
+
     // Get all possible moves
     let moves = amazons.moves();
     console.log(`${amazons.turn() === Amazons.STATE_WHITE ? 'White' : 'Black'} plays : ${moves.length} possible moves.`);
+
     // Select a random move
     let move = moves[Math.floor(Math.random() * moves.length)];
     console.log(`Chosen move : ${move}`);
+
     // Use the selected move
     amazons.move(move);
     console.log(`Board state :\n${amazons.ascii()}`);
 }
+
 // Someone won
 if (amazons.state() === Amazons.STATE_WHITE_WON) {
     console.log(`White player won.`);
 } else {
     console.log(`Black player won.`);
 }
+
 // Print game history
 console.log(`History : ${amazons.history()}`);
 ```
