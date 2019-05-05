@@ -12,11 +12,11 @@ You can learn how to play the Game of Amazons by watching this (awesome) video :
 This code is just the computer randomly playing against itself.
 
 ```js
-let amazons = new Amazons();
-while (!amazons.gameOver()) {
-    let moves = amazons.moves();
-    let move = moves[Math.floor(Math.random() * moves.length)];
-    amazons.move(move);
+let amazons = new Amazons(); // New game
+while (!amazons.gameOver()) { // Keep on going ultil the game is over
+    let moves = amazons.moves(); // Get all possible moves
+    let move = moves[Math.floor(Math.random() * moves.length)]; // Chose a move at random
+    amazons.move(move); // Execute the move
 }
 ```
 
@@ -218,6 +218,10 @@ amazons.ascii();
 // | O . . . . . . W . . |
 // | . . . W . . W . . . |
 // +---------------------+
+
+// W : white piece
+// B : black piece
+// O : arrow
 ```
 
 #### .state()
