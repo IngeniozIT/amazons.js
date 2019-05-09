@@ -1,5 +1,5 @@
-# js-amazons
-A Javascript implementation of the Game of the Amazons.
+# amazons.js
+amazons.js is a Javascript implementation of the Game of the Amazons.
 
 ## How to play Amazons ?
 

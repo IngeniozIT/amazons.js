@@ -1,0 +1,44 @@
+{
+  "name": "amazons.js",
+  "version": "1.0.0",
+  "description": "amazons.js is an implementation of the Game of the Amazons.",
+  "author": "Ingenioz IT <contact@ingenioz.it>",
+  "license": "MIT",
+  "homepage": "https://github.com/IngeniozIT/amazons.js#readme",
+  "keywords": [
+    "amazons",
+    "game of the amazons"
+  ],
+  "main": "src/amazons.js",
+  "filename": "src/amazons.min.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/IngeniozIT/amazons.js.git"
+  },
+  "npmName": "amazons.js",
+  "npmFileMap": [
+    {
+      "basePath": "src/",
+      "files": [
+        "amazons*.js"
+      ]
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/IngeniozIT/amazons.js/issues"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "codecov": "^3.3.0",
+    "mocha": "^6.1.4",
+    "nyc": "^14.1.0",
+    "uglify-es": "^3.3.9"
+  },
+  "dependencies": {},
+  "scripts": {
+    "test": "mocha",
+    "minify": "uglifyjs src/amazons.js > src/amazons.min.js",
+    "report-coverage": "nyc mocha",
+    "html-coverage": "nyc --reporter=html --reporter=text mocha"
+  }
+}
